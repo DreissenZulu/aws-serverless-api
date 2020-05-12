@@ -1,0 +1,8 @@
+{
+    "body": "{\"options\":{\"sysControl\":true, \"fileManage\":true, \"recertFee\":true, \"underTwoAcres\":true, \"overTwoAcres\":true}}",
+    "requestContext": {
+        "identity": {
+            "cognitoIdentityId":"USER-SUB-1235"
+        }
+    }
+}

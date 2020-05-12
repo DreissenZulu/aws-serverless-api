@@ -1,3 +1,5 @@
+org: dreissenzulu
+app: coms-billing-test
 # NOTE: update this with your service name
 service: notes-app-2-api
 
@@ -96,6 +98,14 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
+  create-bill:
+    handler: create-bill.main
+    events:
+      - http:
+        path: create-bill
+        method: post
+        cors: true
+        authorizer: aws_iam
 
 # Create resources with separate CloudFormation templates
 resources:
