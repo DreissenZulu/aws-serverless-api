@@ -102,10 +102,9 @@ functions:
     handler: create-bill.main
     events:
       - http:
-        path: create-bill
-        method: post
-        cors: true
-        authorizer: aws_iam
+          path: create-bill
+          method: post
+          cors: true
 
 # Create resources with separate CloudFormation templates
 resources:
