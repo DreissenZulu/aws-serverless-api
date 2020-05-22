@@ -12,6 +12,7 @@ export const main = handler(async (event) => {
         amount: amount,
         currency: 'xcd',
         payment_method_types: ['card'],
+        setup_future_usage: 'on_session',
         // Verify your integration in this guide by including this parameter
         metadata: {integration_check: 'accept_a_payment'},
   });

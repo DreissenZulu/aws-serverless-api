@@ -105,6 +105,13 @@ functions:
           path: create-bill
           method: post
           cors: true
+  update-bill:
+    handler: update-bill.main
+    events:
+      - http:
+          path: update-bill
+          method: post
+          cors: true
 
 # Create resources with separate CloudFormation templates
 resources:
