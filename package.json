@@ -19,6 +19,8 @@
     "serverless-offline": "^5.3.3"
   },
   "dependencies": {
+    "coinpayments": "^2.1.0",
+    "crypto": "^1.0.1",
     "stripe": "^8.39.0",
     "uuid": "^3.4.0"
   }

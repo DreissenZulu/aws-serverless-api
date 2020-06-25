@@ -53,43 +53,6 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
-
-  get:
-    handler: get.main
-    events:
-      - http:
-          path: notes/{id}
-          method: get
-          cors: true
-          authorizer: aws_iam
-
-  list:
-    handler: list.main
-    events:
-      - http:
-          path: notes
-          method: get
-          cors: true
-          authorizer: aws_iam
-
-  update:
-    handler: update.main
-    events:
-      - http:
-          path: notes/{id}
-          method: put 
-          cors: true
-          authorizer: aws_iam
-
-  delete:
-    handler: delete.main
-    events:
-      - http:
-          path: notes/{id}
-          method: delete
-          cors: true
-          authorizer: aws_iam
-
   billing:
     handler: billing.main
     events:
@@ -110,6 +73,13 @@ functions:
     events:
       - http:
           path: update-bill
+          method: post
+          cors: true
+  encrypt-key:
+    handler: encrypt-key.main
+    events:
+      - http:
+          path: encrypt-key
           method: post
           cors: true
 
