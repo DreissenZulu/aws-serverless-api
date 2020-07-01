@@ -4,11 +4,6 @@ const ses = new aws.SES({ region: 'us-west-2' });
 
 function generateEmail(postData) {
     return `
-    <!DOCTYPE html>
-    <html>
-      <head>
-      </head>
-      <body>
         <p>Hi ${postData.buyer_name},</p>
         <p>This email confirms that your payment to Caribbean Organic Moringa Standards has successfully completed. Your order details are as follows below:</p>
         <br />
@@ -21,41 +16,61 @@ function generateEmail(postData) {
             ${postData.item_name.contains('overtwo') ? '<li>Certification for Crops Over Two Acres</li>' : ''}
         </ul>
         <br />
-        <p><strong>Total Cost:</strong> ${postData.currency2} ${postData.amount2 + postData.fee}</p>
+        <p><strong>Total Cost:</strong> ${postData.currency2} ${postData.amount2} + ${postData.currency2} ${postData.fee} processing fee</p>
         <br />
         <p>Please keep this email for your records.</p>
         <br />
         <p>Sincerely,</p>
         <p>- The Organic Moringa Team</p>
-      </body>
-    </html>
   `;
 };
 
-function generateText(postData) {
-    return `
-    Hi ${postData.buyer_name},
-    This email confirms that your payment to Caribbean Organic Moringa Standards has successfully completed. Your order details are as follows below:
-    
-    Items Selected:
-        ${postData.item_name.contains('syscontrol') ? '- System Control' : ''}
-        ${postData.item_name.contains('filemanage') ? '- File Management' : ''}
-        ${postData.item_name.contains('recert') ? '- Recertification' : ''}
-        ${postData.item_name.contains('undertwo') ? '- Certification for Crops Under Two Acres' : ''}
-        ${postData.item_name.contains('overtwo') ? '- Certification for Crops Over Two Acres' : ''}
+async function post(data) {
+    const { url } = data;
 
-    Total Cost: ${postData.currency2} ${postData.amount2 + postData.fee}
-    
-    Please keep this email for your records.
+    delete data.url;
 
-    Sincerely,
-    - The Organic Moringa Team
-    `
-};
+    const params = {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
+    };
 
-export const main = handler(async (event, context, callback) => {
-    const senderEmail = process.env.SENDER_EMAIL;
+    const response = await fetch(url, params);
 
+    if (response.status < 200 && response.status >= 300) {
+        const res = await response.json();
+
+        throw new Error(res);
+    }
+
+    return response.json();
+}
+
+function sendEmail(name, email, subject, content) {
+    url = "https://ztfgyay7nh.execute-api.us-west-2.amazonaws.com/dev/email/send";
+
+    data = {
+        url,
+        email,
+        name,
+        subject,
+        content
+    };
+
+    post(data)
+        .then((res) => {
+            console.log(res);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+export const main = handler(async (event) => {
     // Convert IPN post data to an object
     let rawPost = JSON.parse(`{"${decodeURI(event.body).replace(/"/g, '\\"').replace(/%40/g, '"@"').replace(/&/g, '","').replace(/=/g, '":"')} "}`);
     rawPost.buyer_name.replace(/\+/g, " ");
@@ -65,41 +80,9 @@ export const main = handler(async (event, context, callback) => {
     if (rawPost.status === "100" && rawPost.ipn_type === "api") {
         // Generate email body
         const htmlBody = generateEmail(rawPost);
-        const textBody = generateText(rawPost);
 
-        const params = {
-            Destination: {
-                ToAddresses: [rawPost.email]
-            },
-            Message: {
-                Body: {
-                    Html: {
-                        Charset: "UTF-8",
-                        Data: htmlBody
-                    },
-                    Text: {
-                        Charset: "UTF-8",
-                        Data: textBody
-                    }
-                },
-                Subject: {
-                    Charset: "UTF-8",
-                    Data: "Your Cryptocurrency Payment Has Been Received!"
-                }
-            },
-            Source: "Team at COMS <team@organicmoringa.com>"
-        };
+        sendEmail(rawPost.buyer_name, rawPost.email, "Your Cryptocurrency Payment Has Been Received!", htmlBody);
 
-        ses.sendEmail(params, function (err, data) {
-            callback(null, { err: err, data: data });
-            if (err) {
-                console.log(err);
-                context.fail(err);
-            } else {
-                console.log(data);
-                context.succeed(event);
-            }
-        });
     }
     return;
 });
