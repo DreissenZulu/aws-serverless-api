@@ -32,35 +32,12 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:DescribeTable
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
+        - "ses:SendEmail"
       # Restrict IAM role permissions to
       # the specific table for the resource
-      Resource:
-        - "Fn::GetAtt": [NotesTable, Arn] 
+      Resource: "*"
 
 functions:
-  create:
-    handler: create.main
-    events:
-      - http:
-          path: notes
-          method: post
-          cors: true
-          authorizer: aws_iam
-  billing:
-    handler: billing.main
-    events:
-      - http:
-          path: billing
-          method: post
-          cors: true
-          authorizer: aws_iam
   create-bill:
     handler: create-bill.main
     events:
@@ -82,15 +59,10 @@ functions:
           path: encrypt-key
           method: post
           cors: true
-
-# Create resources with separate CloudFormation templates
-resources:
-  # API Gateway Errors
-  - ${file(resources/api-gateway-errors.yml)}
-  # DynamoDB
-  - ${file(resources/dynamodb-table.yml)}
-  # S3
-  - ${file(resources/s3-bucket.yml)}
-  # Cognito
-  - ${file(resources/cognito-user-pool.yml)}
-  - ${file(resources/cognito-identity-pool.yml)}
+  ipn-handler:
+    handler: ipn-handler.main
+    events:
+      - http:
+          path: ipn-handler
+          method: post
+          cors: true
