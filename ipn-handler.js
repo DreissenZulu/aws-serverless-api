@@ -40,7 +40,7 @@ export const main = handler(async (event) => {
         // Generate email body
         console.log("Payment Status Complete. Sending email...");
         const htmlBody = generateEmail(rawPost);
-        const url = "https://ztfgyay7nh.execute-api.us-west-2.amazonaws.com/dev/email/send";
+        const url = "https://qcfd2jvbpc.execute-api.us-west-2.amazonaws.com/dev/email/send";
 
         // Given the name, email, subject, and email content, post data to SES handler
         let sendEmail = await axios.post(url,
@@ -48,7 +48,8 @@ export const main = handler(async (event) => {
                 email: rawPost.email,
                 name: rawPost.buyer_name,
                 subject: "Your Cryptocurrency Payment Has Been Received!",
-                content: htmlBody
+                content: htmlBody,
+                forward: true
             }, {
             headers: {
                 "Content-Type": "application/json",
