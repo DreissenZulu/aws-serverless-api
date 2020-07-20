@@ -5,7 +5,7 @@ const axios = require('axios');
 function generateEmail(postData) {
     return `
         <p>Dear ${postData.buyer_name},</p>
-        <p>Thank you for your commitment to the development of a sustainable and environmentally friendly industry. This email confirms that your payment to Caribbean Organic Moringa Standards has successfully completed. Your order details are as follows below:</p>
+        <p>Thank you for your commitment to the development of a sustainable and environmentally friendly industry. This email confirms that your payment to Caribbean Organic Moringa Standard has been successfully completed. Your order details are as follows below:</p>
         <br />
         <p>Items Selected:</p>
         <ul>
